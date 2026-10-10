@@ -1,0 +1,5 @@
+# CPU analysis environment (data preparation, final_analysis.py, figures). Versions used to produce
+# the reported numbers (CPython 3.11).
+numpy==1.26.4
+scipy==1.17.1
+matplotlib==3.11.0

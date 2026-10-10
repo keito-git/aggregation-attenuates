@@ -1,0 +1,35 @@
+--- a/flashinfer/jit/core.py
++++ b/flashinfer/jit/core.py
+@@ -95,18 +95,9 @@
+ 
+ 
+ def check_cuda_arch():
+-    # Collect all detected CUDA architectures
+-    eligible = False
+-    for major, minor in current_compilation_context.TARGET_CUDA_ARCHS:
+-        if major >= 8:
+-            eligible = True
+-        elif major == 7 and minor.isdigit():
+-            if int(minor) >= 5:
+-                eligible = True
+-
+-    # Raise error only if all detected architectures are lower than sm75
+-    if not eligible:
+-        raise RuntimeError("FlashInfer requires GPUs with sm75 or higher")
++    # Patched: skip arch check for Blackwell sm_120 compatibility.
++    # TARGET_CUDA_ARCHS is empty on sm_120 due to CUDA ver check, but GPU is sm120 > sm75.
++    return
+ 
+ 
+ def clear_cache_dir():
+@@ -542,8 +533,8 @@
+     cuda_cflags = [
+         *get_nvcc_parallelism_flags(),
+         "-use_fast_math",
+-        "-Xfatbin=-compress-all",  # Ensure all device binaries are compressed
+-        "--compress-mode=size",
++        # "-Xfatbin=-compress-all",  # Disabled: requires nvcc >= 12.6, system has 12.3
++        # "--compress-mode=size",    # Disabled: requires nvcc >= 12.6, system has 12.3
+         "-DFLASHINFER_ENABLE_F16",
+         "-DFLASHINFER_ENABLE_BF16",
+         "-DFLASHINFER_ENABLE_FP8_E4M3",
